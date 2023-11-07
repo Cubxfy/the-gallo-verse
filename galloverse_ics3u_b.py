@@ -127,16 +127,12 @@ daniel_pupil_radius = 150
 daniel_pupil_x = (640 - daniel_pupil_radius) / 2
 daniel_pupil_y = (480 - daniel_pupil_radius) / 2
 
-# ---------------------
-sun_x_anthony = 570
-sun_y_anthony = random.randrange(70, 410)
-moon_x_anthony = 600
-moon_y_anthony = random.randrange(30, 451)
-rock_x_anthony = 600
-rock_y_anthony = random.randrange(20, 460)
-radius_fire = 1
-
-
+# -------------------
+_tank_ethan = 0
+y_tank_ethan = 274
+velocity_x = 1
+random_ethan = random.randrange(1, 1000)
+# -------------------
 
 running = True
 while running:
@@ -431,83 +427,79 @@ while running:
             y_button_michael += 10
 
         x_people_michael += 90
+    # ----------------------------------------------------------------------------------------
+     scale = linear_interpolation(zoom_level_gallo, 10, 1, MIN_SCALE, MAX_SCALE)
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.MOUSEWHEEL:
+            direction = event.y
+            zoom_level_gallo -= direction
+            zoom_level_gallo = max(min(zoom_level_gallo, 10), 1)
+        elif event.type == pygame.MOUSEMOTION:
+            click, _, _ = event.buttons
+            if click:
+                dx, dy = event.rel
+                camera_x += -dx/scale
+                camera_y += -dy/scale
+        if x_tank_ethan >= 300:
+            velocity_x -= 0.3
+        else:
+            velocity_x += 0.3
 
-    #----------------------------
-    x = 3200
+        x_tank_ethan += velocity_x
+
+    # DRAWING
+    screen.fill((255, 255, 255))
+    window.fill((100, 100, 100))
+
+    # Draw Plot points
+    for x in range(0, MAP_SIZE * PLOT_WIDTH, PLOT_WIDTH):
+        for y in range(0, MAP_SIZE * PLOT_HEIGHT, PLOT_HEIGHT):
+            pygame.draw.circle(screen, (30, 30, 200), (x, y), 5)
+            coord_text = grid_font.render(f"({x}, {y})", False, (0, 0, 0))
+            screen.blit(coord_text, (x, y))
+
+    # -----------
+
+    # ----------------------------------------------------------------------------------------
+
+    # Must have these coordinates
+    x = 1920
     y = 1440
     width = 640
     height = 480
-    y_engine_anthony = 0
-    number_of_engines_anthony = 3
-    x_window_anthony = 300
-    y_window_anthony = 275
-    number_of_windows_anthony = 8
-    count_anthony = 0
-    moon_x_anthony -= 2
-    sun_x_anthony -= 4
-    rock_x_anthony -= 6
     
-    # Background
-    pygame.draw.rect(screen, (8, 23, 54), (x, y, width, height))
+    ethan_x = 0
+    ethan_y = 1440
+    ethan_width = 640
+    ethan_height = 480
+    random_ethan = random.randint(1, 1000)
 
-    # # Crazy Star Code
-    for star in range(20):
-        x_star_anthony = random.randrange(1, 640)
-        y_star_anthony = random.randrange(1, 480)
-        pygame.draw.circle(screen, (225, 225, 225), (x + x_star_anthony, y + y_star_anthony), 1)
- 
-    # Planet Code
-    pygame.draw.circle(screen, (217, 106, 28), (x + sun_x_anthony, y + sun_y_anthony), 60)
-    pygame.draw.circle(screen, (219, 167, 44), ((x + sun_x_anthony), y + sun_y_anthony), 55)
-    pygame.draw.ellipse(screen, (92, 73, 28), ((x + sun_x_anthony) - 72, y + sun_y_anthony, 145, 10))
-    if sun_x_anthony < 75:
-        sun_x_anthony = 570
-        sun_y_anthony = random.randrange(70, 410)
+    frames_gallo += 1
+    text_scale_gallo = abs((math.sin(frames_gallo / 30) - 3) / 3)
 
-    pygame.draw.circle(screen, (137, 116, 116), (x + moon_x_anthony, y + moon_y_anthony), 30)
-    pygame.draw.circle(screen, (105, 87, 87), ((x + moon_x_anthony) + 10, (y + moon_y_anthony) + 6), 10)
-    pygame.draw.circle(screen, (105, 87, 87), ((x + moon_x_anthony) - 15, (y + moon_y_anthony) - 10), 7)
-    if moon_x_anthony < 40:
-        moon_x_anthony = 600
-        moon_y_anthony = random.randrange(30, 451)
-    
-    pygame.draw.polygon(screen, (225, 0, 0), ((x + rock_x_anthony + 2, y + rock_y_anthony - 12), (x + rock_x_anthony + 2, y + rock_y_anthony + 12), (x + rock_x_anthony + 40, y + rock_y_anthony)))
-    pygame.draw.circle(screen, (56, 56, 56), (x + rock_x_anthony, y + rock_y_anthony), 15)
-    if rock_x_anthony < 20:
-        rock_x_anthony = 600
-        rock_y_anthony = random.randrange(20, 451)
-    
-    # # Spaceship Code
-    while y_engine_anthony < (30 * number_of_engines_anthony):
-        pygame.draw.ellipse(screen, (217, 215, 215), (x + ((width / 2) - 125),y + (((height / 2)+ y_engine_anthony) - 5), 100, 50))
-        y_engine_anthony += 30
-        
-    pygame.draw.ellipse(screen, (225, 225, 225), (x + ((320) - 125),y + (height / 2), 350, 100))
-    
-    while count_anthony <= (28 * number_of_windows_anthony):
-        pygame.draw.circle(screen, (0, 0, 0), ((x + x_window_anthony),(y + y_window_anthony)), 8)
-        x_window_anthony += 20
-        count_anthony += 28
 
-    # # Fire Code
-    pygame.draw.circle(screen, (225, 165, 0), (x + 135, y + 290), radius_fire)
-    pygame.draw.circle(screen, (225, 0, 0), (x + 190, y + 270), radius_fire + 2)
-    pygame.draw.circle(screen, (252, 0, 0), (x + 190, y + 310), radius_fire + 2)
-    pygame.draw.circle(screen, (252, 102, 0), (x + 170, y + 300), radius_fire + 1)
-    pygame.draw.circle(screen, (252, 102, 0), (x + 170, y + 280), radius_fire + 1)
-    radius_fire += 2
-    if radius_fire > 12:
-        radius_fire = 1
+    # Rather than screen.fill, draw a rectangle
+    pygame.draw.rect(screen, (220, 220, 220), (ethan_x, ethan_y, width, height))
+    pygame.draw.rect(screen, (193, 154, 107), (ethan_x, ethan_y, width, height))
+    pygame.draw.rect(screen, (101, 116, 50), (ethan_x, ethan_y + 250, width, 100))
+    screen.blit(bg_gallo, (x, y))
 
-    # Rock Hits Rocket
-    if (y + rock_y_anthony) <= (y + 350) and (y + rock_y_anthony) >= (y + 230):
-        rock_y_anthony = 290
-        if (x + rock_x_anthony) < (x + 540):
-            pygame.draw.circle(screen, (225, 0, 0), (x + 540, y + 290), 50)
-            pygame.draw.circle(screen, (225, 100, 0), (x + 540, y + 290), 30)
-    
+    for x in range(12):
+        pygame.draw.circle(screen, "red", (x_tank_ethan + random_ethan, y_tank_ethan - random_ethan), 50)
+        pygame.draw.circle(screen, "orange", (x_tank_ethan + random_ethan, y_tank_ethan - random_ethan), 45)
+
+    pygame.draw.ellipse(screen, (0, 0, 0), (x_tank_ethan - 9, y_tank_ethan + 28, 110, 35))
+    pygame.draw.rect(screen, (0, 0, 255), (x_tank_ethan + 7, y_tank_ethan, 85, 30))
+    pygame.draw.rect(screen, (0, 0, 0), (x_tank_ethan + 20, y_tank_ethan - 20, 50, 20))
+    pygame.draw.rect(screen, (0, 0, 0), (x_tank_ethan + 55, y_tank_ethan - 18, 50, 15))
+    screen.blit(welcome_text_gallo, (x + width//2 - welcome_text_gallo.get_width()//2, y + height//3 - welcome_text_gallo.get_height()//2))
+    scaled_text = pygame.transform.scale(text_gallo, (text_gallo.get_width() * text_scale_gallo, text_gallo.get_height() * text_scale_gallo))
+    screen.blit(scaled_text, (x + width//2 - scaled_text.get_width()//2, y + height//2 - scaled_text.get_height()//2))
+
+
     # ----------------------------------------------------------------------------------------
-
     # Must have these coordinates
     x = 1920
     y = 1440
